@@ -1,0 +1,82 @@
+body {
+    font-family: 'Roboto Condensed', 'Pragati Narrow', Arial, sans-serif;
+    font-size: 1.3rem;
+    color: #f1f1f1;
+    background: #1f2023;
+}
+
+.hide {
+    display: none !important;
+}
+
+#dirPicker::file-selector-button {
+  margin-right: 20px;
+  border: none;
+  background: #084cdf;
+  padding: 10px 20px;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  transition: background .2s ease-in-out;
+}
+
+#dirPicker::file-selector-button:hover {
+  background: #0d45a5;
+}
+
+
+#dirPicker {
+  background: gray;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0px 0px 0px;
+  border-radius: 10px;
+  border: 2px dashed #555;
+  cursor: pointer;
+  transition: background .2s ease-in-out, border .2s ease-in-out;
+  text-align: center;
+  resize: none;
+  font-size: 1.1rem;
+  margin: 5vh 0 0 15%;
+  width: 70%;
+  height: 75vh;
+}
+
+#dirPicker.reduce {
+  height: 10vh !important;
+}
+
+#dirPicker:hover {
+  background: #d8d7d7;
+  border-color: #111;
+  color: #222;
+}
+
+@media only screen and (max-width: 500px) {
+  #dirPicker {
+    text-align: left !important;
+  }
+  #dirPicker.reduce {
+    height: unset !important;
+    padding: 0px !important;
+  }
+}
+
+.valid {
+  color: #008000;
+}
+
+.warning {
+  color: #ff6600;
+}
+
+.error {
+  color: #cc0202;
+}
+
+li {
+  margin-left: 35px;
+}
