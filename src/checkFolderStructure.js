@@ -51,11 +51,12 @@ async function validateFiles(files, spritePath){
         }
         Object.keys(validateStructure).forEach(path => {
             if(validateStructure[path] === false){
-                report("warning", `Couldn't find file: ${replaceRoot(path)}.`)
+                report("warning", `Couldn't find file: ${replaceRoot(path)}`)
             }
         })
 
         report("valid")
+        await checkSprites(files, spritePath)
     }
     else{
         report("error", "Something went terribly wrong!")
@@ -72,7 +73,7 @@ function returnValidateStructure(spritePath, root){
     Object.keys(spritePath).forEach(key => {
         if(!spritePath[key]["ignore"]){
             let fileName = spritePath[key]["name"]
-            if(/_(?:2|3)\.png$/.test(spritePath[key]["name"])){
+            if(/_(?:1|2|3)\.png$/.test(spritePath[key]["name"])){
                 validateStructure[`${root}/${fileName}`] = false; validateStructure[`${root}/back/${fileName}`] = false; validateStructure[`${root}/icons/${spritePath[key]["gen"]}/${fileName}`] = false
                 if(spritePath[key]["female"]){
                     validateStructure[`${root}/female/${fileName}`] = false; validateStructure[`${root}/back/female/${fileName}`] = false

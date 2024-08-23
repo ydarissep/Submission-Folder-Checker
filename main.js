@@ -15,16 +15,6 @@ dirPicker.addEventListener("change",async (event) => {
     for(const file of event.target.files) {
         if(file){
             files.push(file)
-
-            /*
-            const reader = new FileReader()
-
-            reader.addEventListener("load",() => {
-                console.log(reader.result)
-            }, false)
-
-            reader.readAsText(file)
-            */
         }
     }
 
@@ -44,7 +34,7 @@ function baseSpritePath(name, path = null){
     if(path && /\/icons\//.test(path)){
         name = baseShinyIcon(name)
     }
-    return name.replace(/(?:_2|_3)?\.png$/, "")
+    return name.replace(/(?:_1|_2|_3)?\.png$/, "")
 }
 
 function baseShinyIcon(name){
