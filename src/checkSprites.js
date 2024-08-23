@@ -53,7 +53,7 @@ async function checkSprite(path, spriteDataURL, spritePathInfo){
     
             repoSprite.onload = async () => {
                 if(repoSprite.width != sprite.width || repoSprite.height != sprite.height){
-                    report("error", `Incorrect image size: ${replaceRoot(path)}, got: ${sprite.width}x${sprite.height}, expected: ${repoSprite.width}x${repoSprite.height}`)
+                    report("error", `Incorrect image size, got: ${sprite.width}x${sprite.height}, expected: ${repoSprite.width}x${repoSprite.height}: ${replaceRoot(path)}`)
                 }
                 else{
                     let canvas = document.createElement("canvas")
@@ -92,10 +92,10 @@ async function checkSprite(path, spriteDataURL, spritePathInfo){
                             }
                         }
                         if(pal.length < repoPal.length){
-                            report("valid", `Palette count change: ${replaceRoot(path)}, got: ${pal.length}, expected: ${repoPal.length} (this can be ignored)`)
+                            report("valid", `Palette count change, got: ${pal.length}, expected: ${repoPal.length} (this can be ignored): ${replaceRoot(path)}`)
                         }
                         else if(pal.length > repoPal.length){
-                            report("error", `Palette count change: ${replaceRoot(path)}, got: ${pal.length}, expected: ${repoPal.length} (this can be ignored if you're also doing a base fix)`)
+                            report("error", `Palette count change, got: ${pal.length}, expected: ${repoPal.length} (this can be ignored if you're also doing a base fix): ${replaceRoot(path)}`)
                         }
 
                         if(pal.length > 32){
