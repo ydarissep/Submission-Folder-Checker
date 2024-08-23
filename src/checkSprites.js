@@ -17,7 +17,7 @@ async function checkSprites(files, spritePath){
 
 
 
-            if(!/\/icons\//.test(path) || !/_(?:1|2|3)\.png$/.test(path)){
+            if(!/\/icons\//.test(path) && !/_(?:1|2|3)\.png$/.test(path)){
                 const readArrayBuffer = new FileReader()
 
                 readArrayBuffer.addEventListener("load", async () => {
