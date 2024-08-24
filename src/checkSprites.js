@@ -4,7 +4,7 @@ async function checkSprites(files, spritePath){
     for(let i = 0; i < files.length; i++){
         const path = files[i].webkitRelativePath
 
-        if(!spritePath[path]["ignore"]){
+        if(path in spritePath && !spritePath[path]["ignore"]){
             const readerDataURL = new FileReader()
 
             readerDataURL.addEventListener("load", async () => {
