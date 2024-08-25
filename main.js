@@ -27,11 +27,17 @@ dirPicker.addEventListener("change",async (event) => {
 }, false)
 
 function replaceRoot(path){
-    return path.replace(/.*?\//, "\*/")
+    const root = path.split("/")[0]
+    if(root == "back" || root == "exp" || root == "female" || root == "icons" || root == "shiny"){
+        return path
+    }
+    else{
+        return path.replace(/.*?\//, "\*/")
+    }
 }
 
 function baseSpritePath(name, path = null){
-    if(path && /\/icons\//.test(path)){
+    if(path && /icons\//.test(path)){
         name = baseShinyIcon(name)
     }
     return name.replace(/(?:_1|_2|_3)?\.png$/, "")

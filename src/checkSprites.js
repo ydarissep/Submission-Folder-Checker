@@ -17,7 +17,7 @@ async function checkSprites(files, spritePath){
 
 
 
-            if(!/\/icons\//.test(path) && !/_(?:1|2|3)\.png$/.test(path)){
+            if(!/icons\//.test(path) && !/_(?:1|2|3)\.png$/.test(path)){
                 const readArrayBuffer = new FileReader()
 
                 readArrayBuffer.addEventListener("load", async () => {
@@ -41,7 +41,7 @@ async function checkSprite(path, spriteDataURL, spritePathInfo){
     sprite.src = spriteDataURL
 
     sprite.onload = async () => {
-        if(/\/icons\//.test(path)){
+        if(/icons\//.test(path)){
             if(sprite.width != 40 || sprite.height != 30){
                 report("error", `Icon isn't 40x30: ${replaceRoot(path)}`)
             }
@@ -134,16 +134,16 @@ async function checkSprite(path, spriteDataURL, spritePathInfo){
 
 function returnSpriteURL(name, path, gen = null){
     let url = `https://raw.githubusercontent.com/${repo}/public/images/pokemon/`
-    if(/\/icons\/\d+\//.test(path) && gen){
+    if(/icons\/\d+\//.test(path) && gen){
         url += `icons/${gen}/`
     }
-    if(/\/exp\//.test(path)){
+    if(/exp\//.test(path)){
         url += "exp/"
     }
-    if(/\/back\//.test(path)){
+    if(/back\//.test(path)){
         url += "back/"
     }
-    if(/\/female\//.test(path)){
+    if(/female\//.test(path)){
         url += "female/"
     }
     url += name.replace(/_(?:1|2|3)\.png$/, ".png")
