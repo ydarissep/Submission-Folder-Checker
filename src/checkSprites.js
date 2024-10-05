@@ -114,6 +114,10 @@ async function checkSprite(path, spriteDataURL, spritePathInfo){
                                     report("warning", `Transparent background change at ${parseInt((i / 4) / sprite.width)}x${parseInt((i / 4) % sprite.width)}: ${replaceRoot(path)}`)
                                     checkBackground = false
                                 }
+                                else if(imageData.data[i + 3] !== 0 && imageData.data[i + 3] !== 255){
+                                    report("error", `Pixel at ${parseInt((i / 4) / sprite.width)}x${parseInt((i / 4) % sprite.width)} is alpha ${imageData.data[i + 3]}: ${replaceRoot(path)}`)
+                                    checkBackground = false
+                                }
                             }
                         }
                     }
