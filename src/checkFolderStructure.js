@@ -86,7 +86,7 @@ function returnValidateStructure(spritePath, root){
         if(!spritePath[key]["ignore"]){
             let fileName = spritePath[key]["name"]
             if(/_(?:1|2|3)\.png$/.test(spritePath[key]["name"])){
-                validateStructure[`${root}/${fileName}`] = false; validateStructure[`${root}/back/${fileName}`] = false; validateStructure[`${root}/icons/${spritePath[key]["gen"]}/${fileName}`] = false
+                validateStructure[`${root}/${fileName}`] = false; validateStructure[`${root}/back/${fileName}`] = false; validateStructure[`${root}/icons/variant/${spritePath[key]["gen"]}/${fileName}`] = false
                 if(spritePath[key]["female"]){
                     validateStructure[`${root}/female/${fileName}`] = false; validateStructure[`${root}/back/female/${fileName}`] = false
                 }

@@ -4,8 +4,13 @@ async function returnSpritePathInfo(spritePath){
     const spritePathToIcon = await returnSpritePathToIcon(spritePath)
     spritePath = await getSpritePathInfo(spritePathToIcon, spritePath)
     Object.keys(spritePath).forEach(key => {
-        if(spritePath[key]["gen"] == null && /icons\//.test(key)){
+        const genRegex = new RegExp(`icons\/(?:variant\/)?${spritePath[key]["gen"]}`)
+        if(!spritePath[key]["gen"] && /icons\//.test(key)){
             report("warning", `Couldn't find generation for: ${replaceRoot(key)}`)
+            spritePath[key]["ignore"] = true
+        }
+        else if(spritePath[key]["gen"] && /icons\//.test(key) && !genRegex.test(key)){
+            report("error", `Incorrect generation for: ${replaceRoot(key)}`)
             spritePath[key]["ignore"] = true
         }
     })
