@@ -8,7 +8,7 @@ async function checkSprites(files, spritePath){
             const readerDataURL = new FileReader()
 
             readerDataURL.addEventListener("load", async () => {
-                await checkSprite(path, readerDataURL.result, spritePath[path])
+                await checkSprite(path, readerDataURL.result, spritePath[path], await returnBaseFixFile(files, path))
             }, false)
 
 
@@ -35,8 +35,19 @@ async function checkSprites(files, spritePath){
     report("valid")
 }
 
+async function returnBaseFixFile(files, path){
+    if(/_(?:1|2|3)\.png$/.test(path)){
+        const baseFixFile = files.find((file) => file.webkitRelativePath == path.replace(path.match(/(_(?:1|2|3))\.png$/)[1], ""))
+        if(baseFixFile){
+            return baseFixFile
+        }
+    }
+    else{
+        return null
+    }
+}
 
-async function checkSprite(path, spriteDataURL, spritePathInfo){
+async function checkSprite(path, spriteDataURL, spritePathInfo, baseFixFile){
     let sprite = new Image()
     sprite.src = spriteDataURL
 
@@ -95,11 +106,46 @@ async function checkSprite(path, spriteDataURL, spritePathInfo){
                                 }
                             }
                         }
-                        if(pal.length < repoPal.length){
-                            report("valid", `Palette count change, got: ${pal.length}, expected: ${repoPal.length} (this can be ignored): ${replaceRoot(path)}`)
+                        if(pal.length != repoPal.length && baseFixFile){ // Compare pal count to base fix pal count if found
+                            const readerDataURL = new FileReader()
+                            readerDataURL.addEventListener("load", async () => {
+                                let baseFixSprite = new Image()
+                                baseFixSprite.src = readerDataURL.result
+
+                                baseFixSprite.onload = async () => {
+                                    let baseFixCanvas = document.createElement("canvas")
+                                    baseFixCanvas.width = baseFixSprite.width
+                                    baseFixCanvas.height = baseFixSprite.height
+
+                                    const baseFixContext = baseFixCanvas.getContext('2d')
+
+                                    baseFixContext.clearRect(0, 0, baseFixCanvas.width, baseFixCanvas.height)
+                                    baseFixContext.drawImage(baseFixSprite, 0, 0)
+
+                                    let baseFixPal = []
+                                    for(let i = 0; i < imageData.data.length; i += 4){
+                                        if(!baseFixPal.includes(`${imageData.data[i]},${imageData.data[i + 1]},${imageData.data[i + 2]},${imageData.data[i + 3]}`)){
+                                            baseFixPal.push(`${imageData.data[i]},${imageData.data[i + 1]},${imageData.data[i + 2]},${imageData.data[i + 3]}`)
+                                        }
+                                    }
+
+                                    if(pal.length < baseFixPal.length){
+                                        report("valid", `Palette count change, got: ${pal.length}, expected: ${baseFixPal.length} (this can be ignored): ${replaceRoot(path)}`)
+                                    }
+                                    else if(pal.length > baseFixPal.length){
+                                        report("error", `Palette count change, got: ${pal.length}, expected: ${baseFixPal.length} (incorrect base fix): ${replaceRoot(path)}`)
+                                    }
+                                }
+                            }, false)
+                            readerDataURL.readAsDataURL(baseFixFile)
                         }
-                        else if(pal.length > repoPal.length){
-                            report("error", `Palette count change, got: ${pal.length}, expected: ${repoPal.length} (this can be ignored if you're also doing a base fix): ${replaceRoot(path)}`)
+                        else{
+                            if(pal.length < repoPal.length){
+                                report("valid", `Palette count change, got: ${pal.length}, expected: ${repoPal.length} (this can be ignored): ${replaceRoot(path)}`)
+                            }
+                            else if(pal.length > repoPal.length){
+                                report("error", `Palette count change, got: ${pal.length}, expected: ${repoPal.length} (this can be ignored if you're also doing a base fix): ${replaceRoot(path)}`)
+                            }
                         }
 
                         if(pal.length > 32){

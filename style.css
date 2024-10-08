@@ -65,7 +65,7 @@ body {
 }
 
 .valid {
-  color: #008000;
+  color: #009d00;
 }
 
 .warning {
@@ -73,7 +73,7 @@ body {
 }
 
 .error {
-  color: #cc0202;
+  color: #f00;
 }
 
 li {
