@@ -145,7 +145,7 @@ async function checkSprite(path, spriteDataURL, spritePathInfo, baseFixFile){
                                 report("valid", `Palette count change, got: ${pal.length}, expected: ${repoPal.length} (this can be ignored): ${replaceRoot(path)}`)
                             }
                             else if(pal.length > repoPal.length){
-                                report("error", `Palette count change, got: ${pal.length}, expected: ${repoPal.length} (this can be ignored if you're also doing a base fix): ${replaceRoot(path)}`)
+                                report("error", `Palette count change, got: ${pal.length}, expected: ${repoPal.length}: ${replaceRoot(path)}`)
                             }
                         }
 
