@@ -58,7 +58,7 @@ async function validateFiles(files, spritePath, root){
                 }
             }
             Object.keys(validateStructure).forEach(path => {
-                if(validateStructure[path] === false){
+                if(validateStructure[path] === false && /_(?:1|2|3)\.png$/.test(path)){
                     report("warning", `Couldn't find file: ${replaceRoot(path)}`)
                 }
             })
@@ -86,12 +86,12 @@ function returnValidateStructure(spritePath, root){
         if(!spritePath[key]["ignore"]){
             let fileName = spritePath[key]["name"]
             if(/_(?:1|2|3)\.png$/.test(spritePath[key]["name"])){
-                validateStructure[`${root}/${fileName}`] = false; validateStructure[`${root}/back/${fileName}`] = false; validateStructure[`${root}/icons/variant/${spritePath[key]["gen"]}/${fileName}`] = false
+                validateStructure[`${root}/variant/${fileName}`] = false; validateStructure[`${root}/variant/back/${fileName}`] = false; validateStructure[`${root}/icons/variant/${spritePath[key]["gen"]}/${fileName}`] = false
                 if(spritePath[key]["female"]){
-                    validateStructure[`${root}/female/${fileName}`] = false; validateStructure[`${root}/back/female/${fileName}`] = false
+                    validateStructure[`${root}/variant/female/${fileName}`] = false; validateStructure[`${root}/variant/back/female/${fileName}`] = false
                 }
                 if(spritePath[key]["exp"]){
-                    validateStructure[`${root}/exp/${fileName}`] = false; validateStructure[`${root}/exp/back/${fileName}`] = false
+                    validateStructure[`${root}/variant/exp/${fileName}`] = false; validateStructure[`${root}/variant/exp/back/${fileName}`] = false
                 }
                 //if(spritePath[key]["exp"] && spritePath[key]["female"]){}
             }

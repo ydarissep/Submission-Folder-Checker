@@ -37,7 +37,7 @@ async function checkSprites(files, spritePath){
 
 async function returnBaseFixFile(files, path){
     if(/_(?:1|2|3)\.png$/.test(path)){
-        const baseFixFile = files.find((file) => file.webkitRelativePath == path.replace(path.match(/(_(?:1|2|3))\.png$/)[1], ""))
+        const baseFixFile = files.find((file) => file.webkitRelativePath == path.replace(path.match(/(_(?:1|2|3))\.png$/)[1], "").replace("/variant/", "/"))
         if(baseFixFile){
             return baseFixFile
         }
@@ -97,11 +97,11 @@ async function checkSprite(path, spriteDataURL, spritePathInfo, baseFixFile){
 
                             if(checkBackground){
                                 if((imageData.data[i + 3] === 0 && repoImageData.data[i + 3] !== 0) || (imageData.data[i + 3] !== 0 && repoImageData.data[i + 3] === 0)){
-                                    report("error", `Transparent background change at ${parseInt((i / 4) / sprite.width)}x${parseInt((i / 4) % sprite.width)}: ${replaceRoot(path)}`)
+                                    report("error", `Transparent background change at ${parseInt((i / 4) % sprite.width)}x${parseInt((i / 4) / sprite.width)}: ${replaceRoot(path)}`)
                                     checkBackground = false
                                 }
                                 else if(imageData.data[i + 3] !== 0 && imageData.data[i + 3] !== 255){
-                                    report("error", `Pixel at ${parseInt((i / 4) / sprite.width)}x${parseInt((i / 4) % sprite.width)} is alpha ${imageData.data[i + 3]}: ${replaceRoot(path)}`)
+                                    report("error", `Pixel at ${parseInt((i / 4) % sprite.width)}x${parseInt((i / 4) / sprite.width)} is alpha ${imageData.data[i + 3]}: ${replaceRoot(path)}`)
                                     checkBackground = false
                                 }
                             }
@@ -158,11 +158,11 @@ async function checkSprite(path, spriteDataURL, spritePathInfo, baseFixFile){
                         for(let i = 0; i < imageData.data.length; i += 4){
                             if(checkBackground){
                                 if((imageData.data[i + 3] === 0 && repoImageData.data[i + 3] !== 0) || (imageData.data[i + 3] !== 0 && repoImageData.data[i + 3] === 0)){
-                                    report("warning", `Transparent background change at ${parseInt((i / 4) / sprite.width)}x${parseInt((i / 4) % sprite.width)}: ${replaceRoot(path)}`)
+                                    report("warning", `Transparent background change at ${parseInt((i / 4) % sprite.width)}x${parseInt((i / 4) / sprite.width)}: ${replaceRoot(path)}`)
                                     checkBackground = false
                                 }
                                 else if(imageData.data[i + 3] !== 0 && imageData.data[i + 3] !== 255){
-                                    report("error", `Pixel at ${parseInt((i / 4) / sprite.width)}x${parseInt((i / 4) % sprite.width)} is alpha ${imageData.data[i + 3]}: ${replaceRoot(path)}`)
+                                    report("error", `Pixel at ${parseInt((i / 4) % sprite.width)}x${parseInt((i / 4) / sprite.width)} is alpha ${imageData.data[i + 3]}: ${replaceRoot(path)}`)
                                     checkBackground = false
                                 }
                             }

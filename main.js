@@ -7,7 +7,7 @@ dirPicker.addEventListener("change",async (event) => {
     
     const files = []
 
-    if(event.target.files.length > 1000){
+    if(event.target.files.length > 50000){
         report("error", "Too many files!")
         return
     }
