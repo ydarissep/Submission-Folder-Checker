@@ -122,10 +122,11 @@ async function checkSprite(path, spriteDataURL, spritePathInfo, baseFixFile){
                                     baseFixContext.clearRect(0, 0, baseFixCanvas.width, baseFixCanvas.height)
                                     baseFixContext.drawImage(baseFixSprite, 0, 0)
 
+                                    const baseFixImageData= baseFixContext.getImageData(0, 0, baseFixCanvas.width, baseFixCanvas.height)
                                     let baseFixPal = []
-                                    for(let i = 0; i < imageData.data.length; i += 4){
-                                        if(!baseFixPal.includes(`${imageData.data[i]},${imageData.data[i + 1]},${imageData.data[i + 2]},${imageData.data[i + 3]}`)){
-                                            baseFixPal.push(`${imageData.data[i]},${imageData.data[i + 1]},${imageData.data[i + 2]},${imageData.data[i + 3]}`)
+                                    for(let i = 0; i < baseFixImageData.data.length; i += 4){
+                                        if(!baseFixPal.includes(`${baseFixImageData.data[i]},${baseFixImageData.data[i + 1]},${baseFixImageData.data[i + 2]},${baseFixImageData.data[i + 3]}`)){
+                                            baseFixPal.push(`${baseFixImageData.data[i]},${baseFixImageData.data[i + 1]},${baseFixImageData.data[i + 2]},${baseFixImageData.data[i + 3]}`)
                                         }
                                     }
 
