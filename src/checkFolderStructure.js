@@ -1,6 +1,6 @@
 async function checkRootFolder(files){
     let root = files[0].webkitRelativePath.split("/")[0]
-    if(root == "back" || root == "exp" || root == "female" || root == "icons" || root == "shiny"){
+    if(root == "back" || root == "exp" || root == "female" || root == "icons" || root == "shiny" || root == "variant"){
         root = "placeholder"
     }
     if(root){

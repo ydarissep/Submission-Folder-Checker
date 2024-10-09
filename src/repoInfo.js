@@ -44,10 +44,18 @@ async function returnSpritePathToIcon(spritePath){
 }
 
 async function getSpritePathInfo(spritePathToIcon, spritePath){
+    const rawExpSprites= await fetch(`https://raw.githubusercontent.com/${repo}/public/exp-sprites.json`)
+    const jsonExpSprites = await rawExpSprites.json()
+
     for(const key of Object.keys(spritePath)){
         spritePath[key]["female"] = false
         spritePath[key]["gen"] = null
         spritePath[key]["exp"] = false
+
+        if(jsonExpSprites.includes(spritePath[key]["name"].replace(/(?:_(?:1|2|3))?\.png$/, ""))){
+            spritePath[key]["exp"] = true
+        }
+        /*
         try{
             const rawJson = await fetch(`https://raw.githubusercontent.com/${repo}/public/images/pokemon/${baseSpritePath(spritePath[key]["name"], key)}.json`)
             const json = await rawJson.json()
@@ -67,6 +75,7 @@ async function getSpritePathInfo(spritePathToIcon, spritePath){
             report("error", `Most likely incorrect file name: ${replaceRoot(key)}`)
             spritePath[key]["ignore"] = true
         }
+        */
     }
 
     const rawPokemonSpecies= await fetch(`https://raw.githubusercontent.com/${repo}/src/data/pokemon-species.ts`)

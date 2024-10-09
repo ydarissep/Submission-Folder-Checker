@@ -36,8 +36,8 @@ async function checkSprites(files, spritePath){
 }
 
 async function returnBaseFixFile(files, path){
-    if(/_(?:1|2|3)\.png$/.test(path)){
-        const baseFixFile = files.find((file) => file.webkitRelativePath == path.replace(path.match(/(_(?:1|2|3))\.png$/)[1], "").replace("/variant/", "/"))
+    if(/_(?:1|2|3)\.png$|shiny\//.test(path)){
+        const baseFixFile = files.find((file) => file.webkitRelativePath == path.replace(/_(?:1|2|3)/, "").replace(/variant\/|shiny\//, ""))
         if(baseFixFile){
             return baseFixFile
         }
@@ -59,8 +59,17 @@ async function checkSprite(path, spriteDataURL, spritePathInfo, baseFixFile){
         }
         else{
             let repoSprite = new Image()
-            repoSprite.crossOrigin = 'anonymous'
-            repoSprite.src = returnSpriteURL(spritePathInfo["name"], path, spritePathInfo["gen"])
+            if(baseFixFile){
+                const readerDataURL = new FileReader()
+                readerDataURL.addEventListener("load", async () => {
+                    repoSprite.src = readerDataURL.result
+                }, false)
+                readerDataURL.readAsDataURL(baseFixFile)
+            }
+            else{
+                repoSprite.crossOrigin = 'anonymous'
+                repoSprite.src = returnSpriteURL(spritePathInfo["name"], path, spritePathInfo["gen"])
+            }
     
             repoSprite.onload = async () => {
                 if(repoSprite.width != sprite.width || repoSprite.height != sprite.height){
@@ -106,47 +115,11 @@ async function checkSprite(path, spriteDataURL, spritePathInfo, baseFixFile){
                                 }
                             }
                         }
-                        if(pal.length != repoPal.length && baseFixFile){ // Compare pal count to base fix pal count if found
-                            const readerDataURL = new FileReader()
-                            readerDataURL.addEventListener("load", async () => {
-                                let baseFixSprite = new Image()
-                                baseFixSprite.src = readerDataURL.result
-
-                                baseFixSprite.onload = async () => {
-                                    let baseFixCanvas = document.createElement("canvas")
-                                    baseFixCanvas.width = baseFixSprite.width
-                                    baseFixCanvas.height = baseFixSprite.height
-
-                                    const baseFixContext = baseFixCanvas.getContext('2d')
-
-                                    baseFixContext.clearRect(0, 0, baseFixCanvas.width, baseFixCanvas.height)
-                                    baseFixContext.drawImage(baseFixSprite, 0, 0)
-
-                                    const baseFixImageData= baseFixContext.getImageData(0, 0, baseFixCanvas.width, baseFixCanvas.height)
-                                    let baseFixPal = []
-                                    for(let i = 0; i < baseFixImageData.data.length; i += 4){
-                                        if(!baseFixPal.includes(`${baseFixImageData.data[i]},${baseFixImageData.data[i + 1]},${baseFixImageData.data[i + 2]},${baseFixImageData.data[i + 3]}`)){
-                                            baseFixPal.push(`${baseFixImageData.data[i]},${baseFixImageData.data[i + 1]},${baseFixImageData.data[i + 2]},${baseFixImageData.data[i + 3]}`)
-                                        }
-                                    }
-
-                                    if(pal.length < baseFixPal.length){
-                                        report("valid", `Palette count change, got: ${pal.length}, expected: ${baseFixPal.length} (this can be ignored): ${replaceRoot(path)}`)
-                                    }
-                                    else if(pal.length > baseFixPal.length){
-                                        report("error", `Palette count change, got: ${pal.length}, expected: ${baseFixPal.length} (incorrect base fix): ${replaceRoot(path)}`)
-                                    }
-                                }
-                            }, false)
-                            readerDataURL.readAsDataURL(baseFixFile)
+                        if(pal.length < repoPal.length){
+                            report("valid", `Palette count change, got: ${pal.length}, expected: ${repoPal.length} (this can be ignored): ${replaceRoot(path)}`)
                         }
-                        else{
-                            if(pal.length < repoPal.length){
-                                report("valid", `Palette count change, got: ${pal.length}, expected: ${repoPal.length} (this can be ignored): ${replaceRoot(path)}`)
-                            }
-                            else if(pal.length > repoPal.length){
-                                report("error", `Palette count change, got: ${pal.length}, expected: ${repoPal.length}: ${replaceRoot(path)}`)
-                            }
+                        else if(pal.length > repoPal.length){
+                            report("error", `Palette count change, got: ${pal.length}, expected: ${repoPal.length}: ${replaceRoot(path)}`)
                         }
 
                         if(pal.length > 32){
