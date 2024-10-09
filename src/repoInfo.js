@@ -47,35 +47,29 @@ async function getSpritePathInfo(spritePathToIcon, spritePath){
     const rawExpSprites= await fetch(`https://raw.githubusercontent.com/${repo}/public/exp-sprites.json`)
     const jsonExpSprites = await rawExpSprites.json()
 
+    let validName = []
+    for(let i = 1; i <= 9; i++){
+        const rawPokemonIcons = await fetch(`https://raw.githubusercontent.com/${repo}/public/images/pokemon_icons_${i}.json`)
+        const jsonPokemonIcons = await rawPokemonIcons.json()
+
+        for(let j = 0; j < jsonPokemonIcons["textures"][0]["frames"].length; j++){
+            validName.push(jsonPokemonIcons["textures"][0]["frames"][j]["filename"])
+        }
+    }
+
     for(const key of Object.keys(spritePath)){
         spritePath[key]["female"] = false
         spritePath[key]["gen"] = null
         spritePath[key]["exp"] = false
 
-        if(jsonExpSprites.includes(spritePath[key]["name"].replace(/(?:_(?:1|2|3))?\.png$/, ""))){
+        const spritePathName = spritePath[key]["name"].replace(/(?:_(?:1|2|3))?\.png$/, "")
+        if(jsonExpSprites.includes(spritePathName)){
             spritePath[key]["exp"] = true
         }
-        /*
-        try{
-            const rawJson = await fetch(`https://raw.githubusercontent.com/${repo}/public/images/pokemon/${baseSpritePath(spritePath[key]["name"], key)}.json`)
-            const json = await rawJson.json()
-    
-            if("textures" in json){
-                if(json["textures"][0]["frames"].length == 1 && !/gigantamax/.test(spritePath[key]["name"])){
-                    spritePath[key]["exp"] = true
-                }
-            }
-            else{
-                if(json["frames"].length == 1 && !/gigantamax/.test(spritePath[key]["name"])){
-                    spritePath[key]["exp"] = true
-                }
-            }
-        }
-        catch{
-            report("error", `Most likely incorrect file name: ${replaceRoot(key)}`)
+        if(!validName.includes(spritePathName)){
+            report("error", `Incorrect file name: ${replaceRoot(key)}`)
             spritePath[key]["ignore"] = true
         }
-        */
     }
 
     const rawPokemonSpecies= await fetch(`https://raw.githubusercontent.com/${repo}/src/data/pokemon-species.ts`)
