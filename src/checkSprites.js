@@ -54,7 +54,7 @@ async function checkSprite(path, spriteDataURL, spritePathInfo, baseFixFile){
     sprite.onload = async () => {
         if(/icons\//.test(path)){
             if(sprite.width != 40 || sprite.height != 30){
-                report("error", `Icon isn't 40x30: ${replaceRoot(path)}`)
+                report("error", `Icon isn't 40x30, got: ${sprite.width}x${sprite.height}: ${replaceRoot(path)}`)
             }
         }
         else{
@@ -119,7 +119,12 @@ async function checkSprite(path, spriteDataURL, spritePathInfo, baseFixFile){
                             report("valid", `Palette count change, got: ${pal.length}, expected: ${repoPal.length} (this can be ignored): ${replaceRoot(path)}`)
                         }
                         else if(pal.length > repoPal.length){
-                            report("error", `Palette count change, got: ${pal.length}, expected: ${repoPal.length}: ${replaceRoot(path)}`)
+                            if(baseFixFile){
+                                report("error", `Palette count change, got: ${pal.length}, expected: ${repoPal.length} (incorrect base fix): ${replaceRoot(path)}`)
+                            }
+                            else{
+                                report("error", `Palette count change, got: ${pal.length}, expected: ${repoPal.length}: ${replaceRoot(path)}`)
+                            }
                         }
 
                         if(pal.length > 32){
