@@ -98,6 +98,11 @@ function returnValidateStructure(spritePath, root){
             else{
                 if(/icons\//.test(key)){
                     validateStructure[`${root}/icons/${spritePath[key]["gen"]}/${fileName}`] = false
+                    fileName = spritePath[key]["name"].match(/(\d+)s?(?:-?f)?.*?\.png/)[1]
+                    if(spritePath[key]["female"]){
+                        validateStructure[`${root}/icons/${spritePath[key]["gen"]}/${fileName}-f.png`] = false; validateStructure[`${root}/icons/${spritePath[key]["gen"]}/${fileName}s-f.png`] = false
+                    }
+                    validateStructure[`${root}/icons/${spritePath[key]["gen"]}/${fileName}s.png`] = false
                 }
                 fileName = baseShinyIcon(spritePath[key]["name"])
 

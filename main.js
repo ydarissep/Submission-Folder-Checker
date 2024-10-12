@@ -44,7 +44,7 @@ function baseSpritePath(name, path = null){
 }
 
 function baseShinyIcon(name){
-    const sMatch = name.match(/((\d+)s).*?\.png/)
+    const sMatch = name.match(/((\d+)s?(?:-?f)?).*?\.png/)
     if(sMatch){
         return name.replace(sMatch[1], sMatch[2])
     }
