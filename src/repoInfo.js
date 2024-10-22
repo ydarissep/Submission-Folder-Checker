@@ -1,8 +1,8 @@
 window.repo = "pagefaultgames/pokerogue/main"
 
 async function returnSpritePathInfo(spritePath){
-    const spritePathToIcon = await returnSpritePathToIcon(spritePath)
-    spritePath = await getSpritePathInfo(spritePathToIcon, spritePath)
+    const spritePathToSpeciesID = await returnSpritePathToSpeciesID(spritePath)
+    spritePath = await getSpritePathInfo(spritePathToSpeciesID, spritePath)
     Object.keys(spritePath).forEach(key => {
         const genRegex = new RegExp(`icons\/(?:variant\/)?${spritePath[key]["gen"]}\/`)
         if(!spritePath[key]["gen"] && /icons\//.test(key)){
@@ -17,33 +17,31 @@ async function returnSpritePathInfo(spritePath){
     return spritePath
 }
 
-async function returnSpritePathToIcon(spritePath){
-    const rawIcons = await fetch(`https://raw.githubusercontent.com/${repo}/public/images/pokemon/icons/icons.ps1`)
-    const textIcons = await rawIcons.text()
+async function returnSpritePathToSpeciesID(spritePath){
+    const rawSpeciesID = await fetch(`https://raw.githubusercontent.com/${repo}/src/enums/species.ts`)
+    const textSpeciesID = await rawSpeciesID.text()
 
-    let spritePathToIcon = {}
-
-    Object.keys(spritePath).forEach(key => {
-        const name = spritePath[key]["name"]
-        let iconName = textIcons.match(new RegExp(`\\W+(.*?)\\W\\s*=\\s*\\W${baseSpritePath(name, key)}\\W`))
-        if(iconName){
-            spritePathToIcon[name] = iconName[1]
-        }
-        else{
-            const nameInt = name.match(/^\d+/)
-            if(nameInt){
-                iconName = textIcons.match(new RegExp(`\\W+(.*?)\\W\\s*=\\s*\\W${nameInt[0]}\\W`))
-                if(iconName){
-                    spritePathToIcon[name] = iconName[1]
-                }
+    let spritePathToSpeciesID = {}
+    let ID = 0
+    const speciesEnumMatch = textSpeciesID.match(/^\s*\w+\s*(?:\=\s*\d+\s*)?,?$/gm)
+    if(speciesEnumMatch){
+        speciesEnumMatch.forEach(speciesID => {
+            const speciesName = speciesID.match(/\w+/)[0].replaceAll(/_|\.| /g, "-").toLowerCase()
+            const idMatch = speciesID.match(/\=\s*(\d+)/)
+            if(idMatch){
+                ID = parseInt(idMatch[1])
             }
-        }
-    })
+            else{
+                ID++
+            }
+            spritePathToSpeciesID[speciesName] = ID
+        })
+    }
 
-    return spritePathToIcon
+    return spritePathToSpeciesID
 }
 
-async function getSpritePathInfo(spritePathToIcon, spritePath){
+async function getSpritePathInfo(spritePathToSpeciesID, spritePath){
     const rawExpSprites= await fetch(`https://raw.githubusercontent.com/${repo}/public/exp-sprites.json`)
     const jsonExpSprites = await rawExpSprites.json()
 
@@ -116,30 +114,26 @@ async function getSpritePathInfo(spritePathToIcon, spritePath){
                 }
                 
                 if(speciesName){
-                    const regionMatch = speciesName.match(/(ALOLA|GALAR|HISUI|PALDEA)-/i)
-                    if(regionMatch){
-                        speciesName = `${speciesName.replace(`${regionMatch[0]}`, "")}-${regionMatch[1].replace(/\-$/, "")}`
-                    }
+                    const OriginalIconKey = spritePathToSpeciesID[originalSpecies]
+                    if(OriginalIconKey){
+                        const iconKey = speciesName.replace(originalSpecies, OriginalIconKey)
+                        if(validName.includes(iconKey)){
+                            let gen = initSpeciesMatch.match(/Species\.\w+\s*,\s*(\d+)/i)
+                            const femaleMatch = speciesInit.match(/\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*\d+.*?(false|true)/i)
 
-                    if(Object.values(spritePathToIcon).includes(speciesName)){
-                        const iconKeys = Object.keys(spritePathToIcon).filter(key => spritePathToIcon[key] === speciesName)
-                        let gen = initSpeciesMatch.match(/Species\.\w+\s*,\s*(\d+)/i)
-                        const femaleMatch = speciesInit.match(/\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*\d+.*?(false|true)/i)
-
-                        iconKeys.forEach(iconKey => {
-                            const spritePathKeys = Object.keys(spritePath).filter(path => spritePath[path]["name"] === iconKey)
+                            const spritePathKeys = Object.keys(spritePath).filter(path => baseSpritePath(spritePath[path]["name"], path) === iconKey)
                             spritePathKeys.forEach(spritePathKey => {
                                 if(gen){
                                     spritePath[spritePathKey]["gen"] = gen[1]
                                 }
-    
+
                                 if(femaleMatch){
-                                    if(femaleMatch[1].toLowerCase() == "true" && !/-mega|-gigantamax/i.test(spritePathKey)){
+                                    if(femaleMatch[1].toLowerCase() == "true" && !/-mega$|-gigantamax$/i.test(iconKey)){
                                         spritePath[spritePathKey]["female"] = true
                                     }
                                 }
                             })
-                        })
+                        }
                     }
                 }
             })
