@@ -134,7 +134,7 @@ async function getSpritePathInfo(spritePathToIcon, spritePath){
                                 }
     
                                 if(femaleMatch){
-                                    if(femaleMatch[1].toLowerCase() == "true" && !/-mega$|-gigantamax$/i.test(speciesName)){
+                                    if(femaleMatch[1].toLowerCase() == "true" && !/-mega|-gigantamax/i.test(spritePathKey)){
                                         spritePath[spritePathKey]["female"] = true
                                     }
                                 }
